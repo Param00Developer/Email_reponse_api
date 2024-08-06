@@ -1,6 +1,8 @@
 import { fetchLatestUnreadEmail, sendEmail } from "../config/email.js";
 import { generate } from "../config/ai_response_builder.js";
 
+let intervalId;
+
 async function sendEmailResponses() {
   try {
     const emailDetails = await fetchLatestUnreadEmail();
@@ -31,10 +33,22 @@ async function sendEmailResponses() {
   }
 }
 function startEmailSending(req, res) {
-  setInterval(sendEmailResponses, 30000); // Call sendEmail every 30 seconds
+  try {
+    intervalId = setInterval(sendEmailResponses, 30000); // Call sendEmail every 30 seconds
+    return res.status(200).json({
+      success: true,
+      message: "Email sending started",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "Error starting email sending",
+    });
+  }
 }
 
-export async function responseCron() {
+async function responseCron() {
   try {
     startEmailSending();
   } catch (err) {
@@ -42,4 +56,19 @@ export async function responseCron() {
   }
 }
 
-export default startEmailSending;
+async function closeAutomation(req, res) {
+  try {
+    clearInterval(intervalId);
+    return res.status(200).json({
+      success: true,
+      message: "Automation stopped",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "Error closing automation",
+    });
+  }
+}
+export { startEmailSending, closeAutomation };

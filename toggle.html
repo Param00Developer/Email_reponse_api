@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Automation Toggle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, background 0.4s;
+            background: linear-gradient(135deg, #ffffff, #e0e0e0);
+        }
+        .container.active {
+            background: linear-gradient(225deg, #ffffff, #e0e0e0);
+        }
+        .container:hover {
+            transform: translateY(-10px);
+        }
+        .heading {
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            color: #333;
+            font-weight: 700;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        input:checked + .slider {
+            background-color:  #ccc;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .status-message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+            transition: opacity 0.4s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="heading">Start Email Automation</div>
+        <label class="toggle-switch">
+            <input type="checkbox" id="automationToggle">
+            <span class="slider"></span>
+        </label>
+        <div class="status-message" id="statusMessage">Start Auto email reply, make your life easy</div>
+    </div>
+
+    <script>
+        document.getElementById('automationToggle').addEventListener('change', function() {
+            const container = document.getElementById('container');
+            const statusMessage = this.checked ? 'Auto reply to email has been initiated' : 'Start Auto email reply, make your life easy';
+            document.getElementById('statusMessage').innerText = statusMessage;
+
+            if (this.checked) {
+                container.classList.add('active');
+            } else {
+                container.classList.remove('active');
+            }
+            
+            const url = this.checked ? 'http://localhost:3000/intitate' : 'http://localhost:3000/deactivate';
+            fetch(url, {
+                method: 'GET'
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Request successful');
+                } else {
+                    console.error('Request failed');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

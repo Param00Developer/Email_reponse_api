@@ -1,6 +1,6 @@
 import express from "express";
 
-import startEmailSending from "./controller/master";
+import { startEmailSending, closeAutomation } from "./controller/master.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,4 +17,6 @@ app.get("/health", (req, res) => {
   res.send("Server is running").status(200);
 });
 
-app.get("/intitate", startEmailSending);
+app.get("/initiate", startEmailSending);
+
+app.get("/deactivate", closeAutomation);
